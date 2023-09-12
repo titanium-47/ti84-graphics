@@ -2,6 +2,7 @@
 #include <tice.h>
 #include <sys/timers.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BUFFER_1 0xD40000
 #define BUFFER_2 0xD52C00
@@ -9,18 +10,17 @@
 uint8_t* VRAM = (uint8_t*)BUFFER_1;
 uint8_t* buffer2 = (uint8_t*)BUFFER_2;
 
-void draw(int color) {
+void draw(uint8_t color) {
     for( int i = 0; i < 320*240; i++ ) {
         buffer2[i] = color;
     }
-    VRAM = (uint8_t*)((uint24_t)VRAM ^ BUFFER_2);
+    memcpy(VRAM, buffer2, 320*240);
 }
 
 int main(void)
 {
     gfx_Begin();
-    gfx_SetColor(0x80);
-    gfx_FillRectangle(0, 0, 320, 240);
+    draw(0x80);
     sk_key_t key;
     do {
         key = os_GetCSC();
